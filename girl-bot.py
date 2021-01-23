@@ -43,7 +43,7 @@ async def choose(callback_query: CallbackQuery):
 	req = requests.get(u['users'], headers=headers)
 	users = json.loads(req.text)
 	
-	if str(message['from']['id']) not in list(users.keys()):
+	if str(id) not in list(users.keys()):
 		await message.reply("Напиши /start")
 		return
 	
