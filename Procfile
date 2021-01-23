@@ -1,2 +1,2 @@
-worker: python3.6.4 girl-bot.py
+worker: python girl-bot.py
 heroku ps:scale web=1
