@@ -165,6 +165,16 @@ async def start(message: Message):
 	
 	if str(message['from']['id']) not in list(users.keys()):
 		pack(message['from']['id'])
+		req = requests.get(u['girls-data'], headers=headers)
+		urls = json.loads(req.text)
+			
+		media = []
+		for img in users[str(message["from"]["id"])]["pack"][int(users[str(message["from"]["id"])]["pause"])]:
+			image = BytesIO(requests.get(urls[img]).content)
+			media.append(InputMediaPhoto(image, img))
+		await girlBot.send_media_group(message["from"]["id"], media)
+		await girlBot.send_message(message["from"]["id"], "кого ты выберешь? (/stats для статистики)",reply_markup=inline)
+		return
 	
 	if users[str(message['from']['id'])]["pause"] == 8888:
 		await girlBot.send_message(message['from']['id'], "тяночки кончились, проверяй статистику (/stats)")
