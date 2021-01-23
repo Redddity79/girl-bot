@@ -122,12 +122,13 @@ async def choose(callback_query: CallbackQuery):
 async def stats(message: Message):
 	req = requests.get(u['users'], headers=headers)
 	users = json.loads(req.text)
-	if users[str(message['from']['id'])]["pause"] == 8888:
-		await girlBot.send_message(message['from']['id'], "тяночки кончились, проверяй статистику (/stats)")
-		return
 	
 	if str(message['from']['id']) not in list(users.keys()):
 		await message.reply("Напиши /start")
+		return
+	
+	if users[str(message['from']['id'])]["pause"] == 8888:
+		await girlBot.send_message(message['from']['id'], "тяночки кончились, проверяй статистику (/stats)")
 		return
 	
 	req = requests.get(u['results'], headers=headers)
