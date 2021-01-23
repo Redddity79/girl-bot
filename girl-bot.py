@@ -56,9 +56,7 @@ async def choose(callback_query: CallbackQuery):
 		users[str(id)]["pause"] = int(users[str(id)]["pause"]) + 1
 		if int(users[str(id)]["pause"]) > len(users[str(id)]["pack"]):
 			users[str(id)]["pause"] = 0
-			await girlBot.send_message(id, "тяночки кончились, проверяй статистику (/stats)") 
-		
-		requests.put(u['users'], json=users, headers=headers)
+			await girlBot.send_message(id, "тяночки кончились, проверяй статистику (/stats)")
 		
 		req = requests.get(u['girls-data'], headers=headers)
 		urls = json.loads(req.text)
@@ -69,14 +67,12 @@ async def choose(callback_query: CallbackQuery):
 				image = BytesIO(requests.get(urls[img]).content)
 				media.append(InputMediaPhoto(image, img))
 		except:
-			try:
-				img = users[str(id)]["pack"][int(users[str(id)]["pause"])][1]
-				image = [BytesIO(requests.get(urls[img]).content), BytesIO(requests.get(urls[img]).content)]
+			users[str(id)]["pause"] = int(users[str(id)]["pause"]) + 1
+			for img in users[str(id)]["pack"][int(users[str(id)]["pause"])]:
+				image = BytesIO(requests.get(urls[img]).content)
 				media.append(InputMediaPhoto(image, img))
-			except:
-				img = users[str(id)]["pack"][int(users[str(id)]["pause"])][0]
-				image = [BytesIO(requests.get(urls[img]).content), BytesIO(requests.get(urls[img]).content)]
-				media.append(InputMediaPhoto(image, img))
+		
+		requests.put(u['users'], json=users, headers=headers)
 		
 		await girlBot.send_media_group(id, media)
 		await girlBot.send_message(id, "кого ты выберешь? (/stats для статистики)",reply_markup=inline)
@@ -97,8 +93,6 @@ async def choose(callback_query: CallbackQuery):
 			users[str(id)]["pause"] = 0
 			await girlBot.send_message(id, "тяночки кончились, проверяй статистику (/stats)") 
 		
-		requests.put(u['users'], json=users, headers=headers)
-		
 		req = requests.get(u['girls-data'], headers=headers)
 		urls = json.loads(req.text)
 		
@@ -108,14 +102,12 @@ async def choose(callback_query: CallbackQuery):
 				image = BytesIO(requests.get(urls[img]).content)
 				media.append(InputMediaPhoto(image, img))
 		except:
-			try:
-				img = users[str(id)]["pack"][int(users[str(id)]["pause"])][1]
-				image = [BytesIO(requests.get(urls[img]).content), BytesIO(requests.get(urls[img]).content)]
+			users[str(id)]["pause"] = int(users[str(id)]["pause"]) + 1
+			for img in users[str(id)]["pack"][int(users[str(id)]["pause"])]:
+				image = BytesIO(requests.get(urls[img]).content)
 				media.append(InputMediaPhoto(image, img))
-			except:
-				img = users[str(id)]["pack"][int(users[str(id)]["pause"])][0]
-				image = [BytesIO(requests.get(urls[img]).content), BytesIO(requests.get(urls[img]).content)]
-				media.append(InputMediaPhoto(image, img))
+		
+		requests.put(u['users'], json=users, headers=headers)
 		
 		await girlBot.send_media_group(id, media)
 		await girlBot.send_message(id, "кого ты выберешь? (/stats для статистики)",reply_markup=inline)
