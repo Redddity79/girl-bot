@@ -44,7 +44,7 @@ async def choose(callback_query: CallbackQuery):
 	users = json.loads(req.text)
 	
 	if str(id) not in list(users.keys()):
-		await message.reply("Напиши /start")
+		await girlBot.send_message(id,"Напиши /start")
 		return
 	
 	if users[str(id)]["pause"] == 8888:
