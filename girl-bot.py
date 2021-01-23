@@ -39,6 +39,9 @@ def pack(userId):
 @dp.callback_query_handler(lambda c: c.data and c.data.startswith("b"))
 async def choose(callback_query: CallbackQuery):
 	id = callback_query.message["chat"]["id"]
+	if users[str(id)]["pause"] == 8888:
+		await girlBot.send_message(id, "тяночки кончились, проверяй статистику (/stats)")
+		return
 	print(id)
 	if callback_query.data[-1] == "1":
 		req = requests.get(u['results'], headers=headers)
@@ -55,7 +58,7 @@ async def choose(callback_query: CallbackQuery):
 		
 		users[str(id)]["pause"] = int(users[str(id)]["pause"]) + 1
 		if int(users[str(id)]["pause"]) > len(users[str(id)]["pack"]):
-			users[str(id)]["pause"] = 0
+			users[str(id)]["pause"] = 8888
 			await girlBot.send_message(id, "тяночки кончились, проверяй статистику (/stats)")
 		
 		req = requests.get(u['girls-data'], headers=headers)
@@ -114,6 +117,17 @@ async def choose(callback_query: CallbackQuery):
 
 @dp.message_handler(commands=['stats'])
 async def stats(message: Message):
+	if users[str(message['from']['id'])]["pause"] == 8888:
+		await girlBot.send_message(id, "тяночки кончились, проверяй статистику (/stats)")
+		return
+	
+	req = requests.get(u['users'], headers=headers)
+	users = json.loads(req.text)
+	
+	if message['from']['id'] not in list(users.keys()):
+		await message.reply("Напиши /start")
+		return
+	
 	req = requests.get(u['results'], headers=headers)
 	stats = json.loads(req.text)
 	
@@ -136,10 +150,16 @@ async def stats(message: Message):
 
 @dp.message_handler(commands=['contact'])
 async def contact(message: Message):
+	req = requests.get(u['users'], headers=headers)
+	users = json.loads(req.text)
+	
 	await message.reply("пишите по претензиям и прочим штукам - @woman_helper")
 
 @dp.message_handler(commands=['start', 'vote'])
 async def start(message: Message):
+	if users[str(message['from']['id'])]["pause"] == 8888:
+		await girlBot.send_message(id, "тяночки кончились, проверяй статистику (/stats)")
+		return
 	req = requests.get(u['users'], headers=headers)
 	users = json.loads(req.text)
 	
