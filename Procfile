@@ -1,0 +1,1 @@
+worker: python3.6.4 girl-bot.py
