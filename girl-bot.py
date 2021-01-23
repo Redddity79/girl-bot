@@ -162,15 +162,15 @@ async def start(message: Message):
 	req = requests.get(u['users'], headers=headers)
 	users = json.loads(req.text)
 	
+	if str(message['from']['id']) not in list(users.keys()):
+		pack(message['from']['id'])
+	
 	if users[str(message['from']['id'])]["pause"] == 8888:
 		await girlBot.send_message(message['from']['id'], "тяночки кончились, проверяй статистику (/stats)")
 		return
 	
 	req = requests.get(u['girls-data'], headers=headers)
 	urls = json.loads(req.text)
-	
-	if str(message['from']['id']) not in list(users.keys()):
-		pack(message['from']['id'])
 		
 	media = []
 	for img in users[str(message["from"]["id"])]["pack"][int(users[str(message["from"]["id"])]["pause"])]:
