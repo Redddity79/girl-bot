@@ -118,7 +118,7 @@ async def choose(callback_query: CallbackQuery):
 @dp.message_handler(commands=['stats'])
 async def stats(message: Message):
 	if users[str(message['from']['id'])]["pause"] == 8888:
-		await girlBot.send_message(id, "тяночки кончились, проверяй статистику (/stats)")
+		await girlBot.send_message(message['from']['id'], "тяночки кончились, проверяй статистику (/stats)")
 		return
 	
 	req = requests.get(u['users'], headers=headers)
@@ -158,7 +158,7 @@ async def contact(message: Message):
 @dp.message_handler(commands=['start', 'vote'])
 async def start(message: Message):
 	if users[str(message['from']['id'])]["pause"] == 8888:
-		await girlBot.send_message(id, "тяночки кончились, проверяй статистику (/stats)")
+		await girlBot.send_message(message['from']['id'], "тяночки кончились, проверяй статистику (/stats)")
 		return
 	req = requests.get(u['users'], headers=headers)
 	users = json.loads(req.text)
