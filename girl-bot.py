@@ -138,7 +138,7 @@ async def stats(message: Message):
 	req = requests.get(u['girls-data'], headers=headers)
 	urls = json.loads(req.text)
 	
-	text = ""
+	text = "--- ТОП 10 ---\n"
 	
 	for id in range(len(result)):
 		text += f"{id+1}. vk.com/id{result[id][0]} - {result[id][-1]} votes\n"
