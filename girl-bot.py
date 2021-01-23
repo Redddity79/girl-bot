@@ -12,14 +12,18 @@ b1 = InlineKeyboardButton("--- 1 ---", callback_data="b1")
 b2 = InlineKeyboardButton("--- 2 ---", callback_data="b2")
 inline.add(b1,b2)
 
+u = {"girls-data": "https://api.jsonbin.io/b/600b81cea3d8a0580c350185", "results": "https://api.jsonbin.io/b/600b8241bca934583e407470", "users": "https://api.jsonbin.io/b/600b826fa3d8a0580c3501ab"}
+
+SECRET_KEY = '$2b$10$FyaFZ3DqdWEHYUch0yU90uL.8prii18XOrTSgfC4L9hSMKzuzX6dq'
+
+headers = {'Content-Type': 'application/json', 'secret-key': '$2b$10$FyaFZ3DqdWEHYUch0yU90uL.8prii18XOrTSgfC4L9hSMKzuzX6dq', 'versioning': 'false'}
+
 def pack(userId):
-	with open("girls-data.txt") as file:
-		urls = json.load(file)
-	file.close()
+	req = requests.get(u['girls-data'], headers=headers)
+	urls = json.loads(req.text)
 	
-	with open("users.txt") as file:
-		users = json.load(file)
-	file.close()
+	req = requests.get(u['users'], headers=headers)
+	users = json.loads(req.text)
 	
 	new_pack = list(urls.keys())
 	random.shuffle(new_pack)
@@ -30,100 +34,104 @@ def pack(userId):
 	
 	users[userId] = {"pack": new_pack, "pause": 0}
 	
-	with open("users.txt",'w') as file:
-		file.write(json.dumps(users))
-	file.close()
+	requests.put(u['users'], json=users, headers=headers)
 
 @dp.callback_query_handler(lambda c: c.data and c.data.startswith("b"))
 async def choose(callback_query: CallbackQuery):
 	id = callback_query.message["chat"]["id"]
 	print(id)
 	if callback_query.data[-1] == "1":
-		with open("results.txt") as file:
-			res = json.load(file)
-		file.close()
-		with open("users.txt") as file:
-			users = json.load(file)
-		file.close()
+		req = requests.get(u['results'], headers=headers)
+		stats = json.loads(req.text)
+		
+		req = requests.get(u['users'], headers=headers)
+		users = json.loads(req.text)
+		
 		a = users[str(id)]["pack"][int(users[str(id)]["pause"])]
 		print(a)
-		res[a[0]] += 1
+		stats[a[0]] += 1
 		
-		with open("results.txt","w") as file:
-			file.write(json.dumps(res))
-		file.close()
+		requests.put(u['results'], json=stats, headers=headers)
 		
 		users[str(id)]["pause"] = int(users[str(id)]["pause"]) + 1
 		if int(users[str(id)]["pause"]) > len(users[str(id)]["pack"]):
 			users[str(id)]["pause"] = 0
-			await girlBot.send_message(id, "тяночки кончились, проверяй статистику (/stats)") 
+			await girlBot.send_message(id, "тяночки кончились, проверяй статистику (/stats)")
 		
-		with open("users.txt","w") as file:
-			file.write(json.dumps(users))
-		file.close()
-		
-		with open("girls-data.txt") as file:
-			urls = json.load(file)
-		file.close()
+		req = requests.get(u['girls-data'], headers=headers)
+		urls = json.loads(req.text)
 		
 		media = []
-		for img in users[str(id)]["pack"][int(users[str(id)]["pause"])]:
-			image = BytesIO(requests.get(urls[img]).content)
-			media.append(InputMediaPhoto(image, img))
+		try:
+			for img in users[str(id)]["pack"][int(users[str(id)]["pause"])]:
+				image = BytesIO(requests.get(urls[img]).content)
+				media.append(InputMediaPhoto(image, img))
+		except:
+			users[str(id)]["pause"] = int(users[str(id)]["pause"]) + 1
+			for img in users[str(id)]["pack"][int(users[str(id)]["pause"])]:
+				image = BytesIO(requests.get(urls[img]).content)
+				media.append(InputMediaPhoto(image, img))
+		
+		requests.put(u['users'], json=users, headers=headers)
+		
 		await girlBot.send_media_group(id, media)
 		await girlBot.send_message(id, "кого ты выберешь? (/stats для статистики)",reply_markup=inline)
 		
 	if callback_query.data[-1] == "2":
-		with open("results.txt") as file:
-			res = json.load(file)
-		file.close()
-		with open("users.txt") as file:
-			users = json.load(file)
-		file.close()
+		req = requests.get(u['results'], headers=headers)
+		stats = json.loads(req.text)
 		
-		res[users[str(id)]["pack"][int(users[str(id)]["pause"])][-1]] += 1
+		req = requests.get(u['users'], headers=headers)
+		users = json.loads(req.text)
 		
-		with open("results.txt","w") as file:
-			file.write(json.dumps(res))
-		file.close()
+		stats[users[str(id)]["pack"][int(users[str(id)]["pause"])][-1]] += 1
+		
+		requests.put(u['results'], json=stats, headers=headers)
 		
 		users[str(id)]["pause"] = int(users[str(id)]["pause"]) + 1
 		if int(users[str(id)]["pause"]) > len(users[str(id)]["pack"]):
 			users[str(id)]["pause"] = 0
 			await girlBot.send_message(id, "тяночки кончились, проверяй статистику (/stats)") 
 		
-		with open("users.txt","w") as file:
-			file.write(json.dumps(users))
-		file.close()
-		
-		with open("girls-data.txt") as file:
-			urls = json.load(file)
-		file.close()
+		req = requests.get(u['girls-data'], headers=headers)
+		urls = json.loads(req.text)
 		
 		media = []
-		for img in users[str(id)]["pack"][int(users[str(id)]["pause"])]:
-			image = BytesIO(requests.get(urls[img]).content)
-			media.append(InputMediaPhoto(image, img))
+		try:
+			for img in users[str(id)]["pack"][int(users[str(id)]["pause"])]:
+				image = BytesIO(requests.get(urls[img]).content)
+				media.append(InputMediaPhoto(image, img))
+		except:
+			users[str(id)]["pause"] = int(users[str(id)]["pause"]) + 1
+			for img in users[str(id)]["pack"][int(users[str(id)]["pause"])]:
+				image = BytesIO(requests.get(urls[img]).content)
+				media.append(InputMediaPhoto(image, img))
+		
+		requests.put(u['users'], json=users, headers=headers)
+		
 		await girlBot.send_media_group(id, media)
 		await girlBot.send_message(id, "кого ты выберешь? (/stats для статистики)",reply_markup=inline)
 
 @dp.message_handler(commands=['stats'])
 async def stats(message: Message):
-	with open('results.txt') as file:
-		stats = json.load(file)
-	file.close()
+	req = requests.get(u['results'], headers=headers)
+	stats = json.loads(req.text)
 	
 	result = sorted(stats.items(), key=lambda i: i[1], reverse=True)[:10]
 	
-	with open("girls-data.txt") as file:
-		urls = json.load(file)
-	file.close()
+	req = requests.get(u['girls-data'], headers=headers)
+	urls = json.loads(req.text)
 	
-	media = []
+	text = ""
 	
-	for id in result:
+	for id in range(len(result)):
+		text += f"{id+1}. vk.com/id{result[id][0]} - {result[id][-1]} votes\n"
+	
+	media = [InputMediaPhoto(BytesIO(requests.get(urls[result[0][0]]).content), text)]
+	
+	for id in result[1:]:
 		image = BytesIO(requests.get(urls[id[0]]).content)
-		media.append(InputMediaPhoto(image, f"{id[-1]} votes - {id[0]}"))
+		media.append(InputMediaPhoto(image))
 	await girlBot.send_media_group(message["from"]["id"], media)
 
 @dp.message_handler(commands=['contact'])
@@ -132,13 +140,11 @@ async def contact(message: Message):
 
 @dp.message_handler(commands=['start', 'vote'])
 async def start(message: Message):
-	with open("users.txt") as file:
-		users = json.load(file)
-	file.close()
+	req = requests.get(u['users'], headers=headers)
+	users = json.loads(req.text)
 	
-	with open("girls-data.txt") as file:
-		urls = json.load(file)
-	file.close()
+	req = requests.get(u['girls-data'], headers=headers)
+	urls = json.loads(req.text)
 	
 	if str(message['from']['id']) not in list(users.keys()):
 		pack(message['from']['id'])
