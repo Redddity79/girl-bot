@@ -67,9 +67,15 @@ async def choose(callback_query: CallbackQuery):
 		file.close()
 		
 		media = []
-		for img in users[str(id)]["pack"][int(users[str(id)]["pause"])]:
-			image = BytesIO(requests.get(urls[img]).content)
+		try:
+			for img in users[str(id)]["pack"][int(users[str(id)]["pause"])]:
+				image = BytesIO(requests.get(urls[img]).content)
+				media.append(InputMediaPhoto(image, img))
+		except:
+			img = users[str(id)]["pack"][int(users[str(id)]["pause"])]
+			image = [BytesIO(requests.get(urls[img]).content), BytesIO(requests.get(urls[img]).content)]
 			media.append(InputMediaPhoto(image, img))
+		
 		await girlBot.send_media_group(id, media)
 		await girlBot.send_message(id, "кого ты выберешь? (/stats для статистики)",reply_markup=inline)
 		
@@ -101,9 +107,15 @@ async def choose(callback_query: CallbackQuery):
 		file.close()
 		
 		media = []
-		for img in users[str(id)]["pack"][int(users[str(id)]["pause"])]:
-			image = BytesIO(requests.get(urls[img]).content)
+		try:
+			for img in users[str(id)]["pack"][int(users[str(id)]["pause"])]:
+				image = BytesIO(requests.get(urls[img]).content)
+				media.append(InputMediaPhoto(image, img))
+		except:
+			img = users[str(id)]["pack"][int(users[str(id)]["pause"])]
+			image = [BytesIO(requests.get(urls[img]).content), BytesIO(requests.get(urls[img]).content)]
 			media.append(InputMediaPhoto(image, img))
+		
 		await girlBot.send_media_group(id, media)
 		await girlBot.send_message(id, "кого ты выберешь? (/stats для статистики)",reply_markup=inline)
 
