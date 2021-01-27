@@ -14,7 +14,7 @@ inline.add(b1,b2)
 
 u = {"girls-data": "https://api.jsonbin.io/b/600b81cea3d8a0580c350185", "results": "https://api.jsonbin.io/b/600b8241bca934583e407470", "users": "https://api.jsonbin.io/b/600b826fa3d8a0580c3501ab"}
 
-SECRET_KEY = '$2b$10$FyaFZ3DqdWEHYUch0yU90uL.8prii18XOrTSgfC4L9hSMKzuzX6dq'
+SECRET_KEY = 'secret key lol'
 
 headers = {'Content-Type': 'application/json', 'secret-key': '$2b$10$FyaFZ3DqdWEHYUch0yU90uL.8prii18XOrTSgfC4L9hSMKzuzX6dq', 'versioning': 'false'}
 
